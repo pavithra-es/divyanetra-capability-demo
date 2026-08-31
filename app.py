@@ -3,6 +3,14 @@ import duckdb
 import pandas as pd
 import plotly.express as px
 
+import os
+from setup_data import create_lakehouse
+
+DB_FILE = "divyanetra.duckdb"
+
+if not os.path.exists(DB_FILE):
+    create_lakehouse()
+    
 from database import (
     DB_NAME,
     initialize_database,
