@@ -4,6 +4,9 @@ import pandas as pd
 import plotly.express as px
 
 import os
+from database import get_connection
+
+conn = get_connection()
 from setup_data import create_lakehouse
 
 DB_FILE = "divyanetra.duckdb"
@@ -93,7 +96,9 @@ page = st.sidebar.radio(
 
         "💬 Executive Query",
 
-        "📜 Audit & Governance"
+        "📜 Audit & Governance",
+
+        "🗄️ Data Explorer" 
     ]
 )
 
@@ -663,3 +668,35 @@ elif page == "📜 Audit & Governance":
 - **Act:** Mock ServiceNow, WFM and Teams workflow
 - **Audit:** Every agent action is logged
 """)
+elif page == "🗄️ Data Explorer":
+
+    st.title("🗄️ DivyaNetra Data Explorer")
+
+    tables = [
+        "bronze_meter_telemetry",
+        "bronze_rollout_progress",
+        "bronze_vendor_performance",
+        "silver_meter_telemetry",
+        "silver_rollout_progress",
+        "silver_vendor_performance",
+        "gold_network_kpi",
+        "gold_rollout_kpi"
+    ]
+
+    selected_table = st.selectbox(
+        "Select Data Layer / Table",
+        tables
+    )
+
+    df = conn.execute(
+        f"SELECT * FROM {selected_table}"
+    ).df()
+
+    st.subheader(f"📊 {selected_table}")
+
+    st.dataframe(
+        df,
+        use_container_width=True
+    )
+
+    st.success(f"Total Records: {len(df)}")    
